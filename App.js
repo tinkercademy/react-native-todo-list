@@ -19,7 +19,25 @@ export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Notes" component={NotesScreen} />
+        <Stack.Screen
+          name="Notes"
+          component={NotesScreen}
+          options={{
+            title: "Notes, a Todo App",
+            headerStyle: {
+              backgroundColor: "yellow",
+              height: 100,
+              shadowColor: "black",
+              shadowOpacity: 0.2,
+              shadowRadius: 5,
+            },
+            headerTintColor: "#f55",
+            headerTitleStyle: {
+              fontSize: 24,
+              fontWeight: "bold",
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -28,7 +46,7 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#ffc",
     alignItems: "center",
     justifyContent: "center",
   },
