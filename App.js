@@ -1,13 +1,12 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect } from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as SQLite from "expo-sqlite";
 
-const db = SQLite.openDatabase("notes.db");
+// const db = SQLite.openDatabase("notes.db");
 
 function NotesScreen({ navigation }) {
   useEffect(() => {
@@ -29,7 +28,7 @@ function NotesScreen({ navigation }) {
   });
 
   function addNote() {
-    console.log("Adding a new note!");
+    alert("Adding a new note!");
   }
 
   return (
