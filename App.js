@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as SQLite from "expo-sqlite";
 
-// const db = SQLite.openDatabase("notes.db");
+const db = SQLite.openDatabase("notes.db");
 
 function NotesScreen({ navigation }) {
   useEffect(() => {
