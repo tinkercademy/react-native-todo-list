@@ -7,15 +7,27 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import * as SQLite from "expo-sqlite";
+import * as FileSystem from "expo-file-system";
 
-const SAMPLE_NOTES = [
-  { title: "Feed the monkey", done: false, id: "0" },
-  { title: "Do the laundry", done: false, id: "1" },
-  { title: "More sample data", done: false, id: "2" },
-];
+const db = SQLite.openDatabase("notes.db");
+console.log(FileSystem.documentDirectory);
 
 export default function NotesScreen({ navigation, route }) {
-  const [notes, setNotes] = useState(SAMPLE_NOTES);
+  const [notes, setNotes] = useState([]);
+
+  // This is to set up the database on first run
+  useEffect(() => {
+    db.transaction((tx) => {
+      tx.executeSql(
+        `CREATE TABLE IF NOT EXISTS notes
+        (id INTEGER PRIMARY KEY AUTOINCREMENT,
+          title TEXT,
+          done INT)
+        `
+      );
+    });
+  }, []);
 
   // This is to set up the top right button
   useEffect(() => {
