@@ -16,17 +16,32 @@ console.log(FileSystem.documentDirectory);
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
 
-  // This is to set up the database on first run
-  useEffect(() => {
+  function refreshNotes() {
     db.transaction((tx) => {
       tx.executeSql(
-        `CREATE TABLE IF NOT EXISTS notes
+        "SELECT * FROM notes",
+        null,
+        (txObj, { rows: { _array } }) => setNotes(_array),
+        (txObj, error) => console.log(`Error: ${error}`)
+      );
+    });
+  }
+
+  // This is to set up the database on first run
+  useEffect(() => {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          `CREATE TABLE IF NOT EXISTS notes
         (id INTEGER PRIMARY KEY AUTOINCREMENT,
           title TEXT,
           done INT)
         `
-      );
-    });
+        );
+      },
+      null,
+      refreshNotes
+    );
   }, []);
 
   // This is to set up the top right button
@@ -48,15 +63,18 @@ export default function NotesScreen({ navigation, route }) {
     });
   });
 
-  // Monitor route.params for changes
+  // Monitor route.params for changes and add items to the database
   useEffect(() => {
     if (route.params?.text) {
-      const newNote = {
-        title: route.params.text,
-        done: false,
-        id: notes.length.toString(),
-      };
-      setNotes([...notes, newNote]);
+      db.transaction(
+        (tx) => {
+          tx.executeSql("INSERT INTO notes (done, title) VALUES (0, ?)", [
+            route.params.text,
+          ]);
+        },
+        null,
+        refreshNotes
+      );
     }
   }, [route.params?.text]);
 
@@ -86,6 +104,7 @@ export default function NotesScreen({ navigation, route }) {
         data={notes}
         renderItem={renderItem}
         style={{ width: "100%" }}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
