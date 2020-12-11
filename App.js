@@ -11,6 +11,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import * as SQLite from "expo-sqlite";
+import AddScreen from "./screens/AddScreen";
 
 const db = SQLite.openDatabase("notes.db");
 
@@ -103,25 +104,6 @@ function NotesStack() {
         }}
       />
     </InnerStack.Navigator>
-  );
-}
-
-function AddScreen({ navigation }) {
-  return (
-    <View style={[styles.container, { backgroundColor: "white" }]}>
-      <Text style={{ fontSize: 24 }}>This is the add screen</Text>
-      <TouchableOpacity
-        style={{
-          padding: 10,
-          backgroundColor: "orange",
-          borderRadius: 5,
-          marginTop: 30,
-        }}
-        onPress={() => navigation.goBack()}
-      >
-        <Text>Dismiss</Text>
-      </TouchableOpacity>
-    </View>
   );
 }
 
