@@ -23,6 +23,7 @@ const SAMPLE_NOTES = [
 function NotesScreen({ navigation }) {
   const [notes, setNotes] = useState(SAMPLE_NOTES);
 
+  // This is to set up the top right button
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -42,12 +43,13 @@ function NotesScreen({ navigation }) {
   });
 
   function addNote() {
-    const newNote = {
-      title: "Sample note",
-      done: false,
-      id: notes.length.toString(),
-    };
-    setNotes([...notes, newNote]);
+    navigation.navigate("Add Screen");
+    // const newNote = {
+    //   title: "Sample note",
+    //   done: false,
+    //   id: notes.length.toString(),
+    // };
+    // setNotes([...notes, newNote]);
   }
 
   function renderItem({ item }) {
@@ -77,31 +79,59 @@ function NotesScreen({ navigation }) {
   );
 }
 
-const Stack = createStackNavigator();
+const InnerStack = createStackNavigator();
+function NotesStack() {
+  return (
+    <InnerStack.Navigator>
+      <InnerStack.Screen
+        name="Notes"
+        component={NotesScreen}
+        options={{
+          title: "Notes, a Todo App",
+          headerStyle: {
+            backgroundColor: "yellow",
+            height: 100,
+            shadowColor: "black",
+            shadowOpacity: 0.2,
+            shadowRadius: 5,
+          },
+          headerTintColor: "#f55",
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: "bold",
+          },
+        }}
+      />
+    </InnerStack.Navigator>
+  );
+}
 
+function AddScreen({ navigation }) {
+  return (
+    <View style={[styles.container, { backgroundColor: "white" }]}>
+      <Text style={{ fontSize: 24 }}>This is the add screen</Text>
+      <TouchableOpacity
+        style={{
+          padding: 10,
+          backgroundColor: "orange",
+          borderRadius: 5,
+          marginTop: 30,
+        }}
+        onPress={() => navigation.goBack()}
+      >
+        <Text>Dismiss</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
+
+const Stack = createStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Notes"
-          component={NotesScreen}
-          options={{
-            title: "Notes, a Todo App",
-            headerStyle: {
-              backgroundColor: "yellow",
-              height: 100,
-              shadowColor: "black",
-              shadowOpacity: 0.2,
-              shadowRadius: 5,
-            },
-            headerTintColor: "#f55",
-            headerTitleStyle: {
-              fontSize: 24,
-              fontWeight: "bold",
-            },
-          }}
-        />
+      <Stack.Navigator headerMode="none" mode="modal">
+        <Stack.Screen name="Notes Stack" component={NotesStack} />
+        <Stack.Screen name="Add Screen" component={AddScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
