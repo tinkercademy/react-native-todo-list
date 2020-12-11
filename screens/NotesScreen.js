@@ -14,7 +14,7 @@ const SAMPLE_NOTES = [
   { title: "More sample data", done: false, id: "2" },
 ];
 
-export default function NotesScreen({ navigation }) {
+export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState(SAMPLE_NOTES);
 
   // This is to set up the top right button
@@ -36,14 +36,20 @@ export default function NotesScreen({ navigation }) {
     });
   });
 
+  // Monitor route.params for changes
+  useEffect(() => {
+    if (route.params?.text) {
+      const newNote = {
+        title: route.params.text,
+        done: false,
+        id: notes.length.toString(),
+      };
+      setNotes([...notes, newNote]);
+    }
+  }, [route.params?.text]);
+
   function addNote() {
     navigation.navigate("Add Screen");
-    // const newNote = {
-    //   title: "Sample note",
-    //   done: false,
-    //   id: notes.length.toString(),
-    // };
-    // setNotes([...notes, newNote]);
   }
 
   function renderItem({ item }) {
