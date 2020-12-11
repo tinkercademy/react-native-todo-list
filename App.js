@@ -1,6 +1,12 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -8,7 +14,15 @@ import * as SQLite from "expo-sqlite";
 
 const db = SQLite.openDatabase("notes.db");
 
+const SAMPLE_NOTES = [
+  { title: "Feed the monkey", done: false, id: "0" },
+  { title: "Do the laundry", done: false, id: "1" },
+  { title: "More sample data", done: false, id: "2" },
+];
+
 function NotesScreen({ navigation }) {
+  const [notes, setNotes] = useState(SAMPLE_NOTES);
+
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
@@ -28,13 +42,37 @@ function NotesScreen({ navigation }) {
   });
 
   function addNote() {
-    alert("Adding a new note!");
+    const newNote = {
+      title: "Sample note",
+      done: false,
+      id: notes.length.toString(),
+    };
+    setNotes([...notes, newNote]);
+  }
+
+  function renderItem({ item }) {
+    return (
+      <View
+        style={{
+          padding: 10,
+          paddingTop: 20,
+          paddingBottom: 20,
+          borderBottomColor: "#ccc",
+          borderBottomWidth: 1,
+        }}
+      >
+        <Text>{item.title}</Text>
+      </View>
+    );
   }
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <FlatList
+        data={notes}
+        renderItem={renderItem}
+        style={{ width: "100%" }}
+      />
     </View>
   );
 }
