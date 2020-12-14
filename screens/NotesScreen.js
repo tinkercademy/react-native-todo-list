@@ -82,6 +82,19 @@ export default function NotesScreen({ navigation, route }) {
     navigation.navigate("Add Screen");
   }
 
+  // This deletes an individual note
+  function deleteNote(id) {
+    console.log("Deleting " + id);
+    db.transaction(
+      (tx) => {
+        tx.executeSql(`DELETE FROM notes WHERE id=${id}`);
+      },
+      null,
+      refreshNotes
+    );
+  }
+
+  // The function to render each row in our FlatList
   function renderItem({ item }) {
     return (
       <View
@@ -91,9 +104,14 @@ export default function NotesScreen({ navigation, route }) {
           paddingBottom: 20,
           borderBottomColor: "#ccc",
           borderBottomWidth: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
         }}
       >
         <Text>{item.title}</Text>
+        <TouchableOpacity onPress={() => deleteNote(item.id)}>
+          <Ionicons name="trash" size={16} color="#944" />
+        </TouchableOpacity>
       </View>
     );
   }
