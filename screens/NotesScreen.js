@@ -7,42 +7,9 @@ import {
   FlatList,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import * as SQLite from "expo-sqlite";
-import * as FileSystem from "expo-file-system";
-
-const db = SQLite.openDatabase("notes.db");
-console.log(FileSystem.documentDirectory);
 
 export default function NotesScreen({ navigation, route }) {
   const [notes, setNotes] = useState([]);
-
-  function refreshNotes() {
-    db.transaction((tx) => {
-      tx.executeSql(
-        "SELECT * FROM notes",
-        null,
-        (txObj, { rows: { _array } }) => setNotes(_array),
-        (txObj, error) => console.log(`Error: ${error}`)
-      );
-    });
-  }
-
-  // This is to set up the database on first run
-  useEffect(() => {
-    db.transaction(
-      (tx) => {
-        tx.executeSql(
-          `CREATE TABLE IF NOT EXISTS notes
-        (id INTEGER PRIMARY KEY AUTOINCREMENT,
-          title TEXT,
-          done INT)
-        `
-        );
-      },
-      null,
-      refreshNotes
-    );
-  }, []);
 
   // This is to set up the top right button
   useEffect(() => {
@@ -66,15 +33,12 @@ export default function NotesScreen({ navigation, route }) {
   // Monitor route.params for changes and add items to the database
   useEffect(() => {
     if (route.params?.text) {
-      db.transaction(
-        (tx) => {
-          tx.executeSql("INSERT INTO notes (done, title) VALUES (0, ?)", [
-            route.params.text,
-          ]);
-        },
-        null,
-        refreshNotes
-      );
+      const newNote = {
+        title: route.params.text,
+        done: false,
+        id: notes.length.toString(),
+      };
+      setNotes([...notes, newNote]);
     }
   }, [route.params?.text]);
 
@@ -85,13 +49,8 @@ export default function NotesScreen({ navigation, route }) {
   // This deletes an individual note
   function deleteNote(id) {
     console.log("Deleting " + id);
-    db.transaction(
-      (tx) => {
-        tx.executeSql(`DELETE FROM notes WHERE id=${id}`);
-      },
-      null,
-      refreshNotes
-    );
+    // To delete that item, we filter out the item we don't want
+    setNotes(notes.filter((item) => item.id !== id));
   }
 
   // The function to render each row in our FlatList
